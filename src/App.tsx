@@ -1,18 +1,21 @@
-import { useState } from 'react'
-import { Button } from '@chakra-ui/react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from "./components/ui/Layout";
+import Home from './pages/Home';
+import Wizard from './pages/Wizard';
+import EmployeeList from './pages/EmployeeList';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div>
-      <h1>Admin Wizard</h1>
-      <h2>Count: {count}</h2>
-      <Button onClick={() => setCount(count + 1)}>
-        Click me
-      </Button>
-    </div>
-  )
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/wizard" element={<Wizard />} />
+          <Route path="/employees" element={<EmployeeList />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  );
 }
 
 export default App

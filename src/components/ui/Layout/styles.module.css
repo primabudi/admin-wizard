@@ -1,0 +1,25 @@
+.container {
+  min-height: 100vh;
+}
+
+.header {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.main {
+  padding: 2rem;
+}
