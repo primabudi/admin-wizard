@@ -22,9 +22,10 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
     control,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<WizardStep1FormData>({
     resolver: zodResolver(wizardStep1Schema),
+    mode: 'onChange',
     defaultValues: defaultValues || {
       fullName: '',
       email: '',
@@ -122,7 +123,7 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
           </Field.Root>
 
           <div className={styles.actions}>
-            <Button type="submit" colorPalette="blue">
+            <Button type="submit" colorPalette="blue" disabled={!isValid}>
               Next
             </Button>
           </div>
