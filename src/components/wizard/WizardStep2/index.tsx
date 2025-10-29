@@ -15,9 +15,10 @@ interface WizardStep2Props {
   onBack: () => void;
   onSubmit: (data: WizardStep2FormData) => void;
   defaultValues?: Partial<WizardStep2FormData>;
+  showBackButton?: boolean;
 }
 
-export default function WizardStep2({ onBack, onSubmit, defaultValues }: WizardStep2Props) {
+export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackButton = true }: WizardStep2Props) {
   const {
     register,
     handleSubmit,
@@ -153,9 +154,11 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues }: WizardS
           </Field.Root>
 
           <div className={styles.actions}>
-            <Button onClick={onBack} colorPalette="gray">
-              Back
-            </Button>
+            {showBackButton && (
+              <Button onClick={onBack} colorPalette="gray">
+                Back
+              </Button>
+            )}
             <Button type="submit" colorPalette="blue" disabled={!isValid}>
               Submit
             </Button>
