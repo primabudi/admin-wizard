@@ -1,9 +1,12 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import AsyncSelect from 'react-select/async';
 import { Button, Input, NativeSelectRoot, NativeSelectField, Stack } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react/field';
 import { wizardStep1Schema, type WizardStep1FormData } from './schema';
 import { ROLES } from '../../../types';
+import { departmentApi } from '../../../services/api';
+import { useDebounce } from '../../../hooks/useDebounce';
 import styles from './styles.module.css';
 
 interface WizardStep1Props {
@@ -15,6 +18,7 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<WizardStep1FormData>({
     resolver: zodResolver(wizardStep1Schema),
@@ -29,6 +33,19 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
   const onSubmit = (data: WizardStep1FormData) => {
     onNext(data);
   };
+
+  const loadDepartmentOptions = useDebounce(async (inputValue: string) => {
+    if (!inputValue) return [];
+    try {
+      const departments = await departmentApi.getDepartments(inputValue);
+      return departments.map((dept) => ({
+        label: dept.name,
+        value: dept.name,
+      }));
+    } catch {
+      return [];
+    }
+  }, 300);
 
   return (
     <div className={styles.container}>
@@ -50,7 +67,21 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
 
           <Field.Root invalid={!!errors.department} required>
             <Field.Label>Department</Field.Label>
-            <Input placeholder="TODO: Autocomplete" {...register('department')} />
+            <Controller
+              name="department"
+              control={control}
+              render={({ field }) => (
+                <AsyncSelect
+                  cacheOptions
+                  loadOptions={loadDepartmentOptions}
+                  value={field.value ? { label: field.value, value: field.value } : null}
+                  onChange={(option) => field.onChange(option?.value || '')}
+                  onBlur={field.onBlur}
+                  placeholder="Search department..."
+                  isClearable
+                />
+              )}
+            />
             {errors.department && <Field.ErrorText>{errors.department.message}</Field.ErrorText>}
           </Field.Root>
 
