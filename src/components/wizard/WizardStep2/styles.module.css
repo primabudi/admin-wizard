@@ -14,3 +14,22 @@
   justify-content: space-between;
   margin-top: 1rem;
 }
+
+.photoPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.previewImage {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+}
+
+.removeButton {
+  margin-top: 0.5rem;
+}

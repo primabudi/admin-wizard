@@ -1,9 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { Button, Input, NativeSelectRoot, NativeSelectField, Stack, Textarea } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react/field';
 import { wizardStep2Schema, type WizardStep2FormData } from './schema';
 import { EMPLOYMENT_TYPES } from '../../../types';
+import { fileToBase64, validateImageFile } from '../../../utils/fileToBase64';
 import styles from './styles.module.css';
 
 interface WizardStep2Props {
@@ -16,6 +18,7 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues }: WizardS
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isValid },
   } = useForm<WizardStep2FormData>({
     resolver: zodResolver(wizardStep2Schema),
@@ -28,6 +31,35 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues }: WizardS
     },
   });
 
+  const [photoPreview, setPhotoPreview] = useState<string | null>(defaultValues?.photo || null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      setPhotoError(validationError);
+      return;
+    }
+
+    try {
+      setPhotoError(null);
+      const base64 = await fileToBase64(file);
+      setPhotoPreview(base64);
+      setValue('photo', base64);
+    } catch (error) {
+      setPhotoError('Failed to upload image');
+      console.error('Failed to convert image to Base64:', error);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setPhotoPreview(null);
+    setValue('photo', '');
+  };
+
   const handleFormSubmit = (data: WizardStep2FormData) => {
     onSubmit(data);
   };
@@ -38,14 +70,24 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues }: WizardS
 
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Stack gap={4}>
-          <Field.Root invalid={!!errors.photo}>
+          <Field.Root invalid={!!errors.photo || !!photoError}>
             <Field.Label>Photo</Field.Label>
-            <Input
-              type="file"
-              accept="image/*"
-              placeholder="Upload photo"
-            />
+            {photoPreview ? (
+              <div className={styles.photoPreview}>
+                <img src={photoPreview} alt="Preview" className={styles.previewImage} />
+                <Button onClick={handleRemovePhoto} colorPalette="red" size="sm" className={styles.removeButton}>
+                  Remove
+                </Button>
+              </div>
+            ) : (
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+            )}
             {errors.photo && <Field.ErrorText>{errors.photo.message}</Field.ErrorText>}
+            {photoError && <Field.ErrorText>{photoError}</Field.ErrorText>}
           </Field.Root>
 
           <Field.Root invalid={!!errors.employmentType} required>
