@@ -5,6 +5,7 @@ export const wizardStep1Schema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email format'),
   department: z.string().min(1, 'Department is required'),
   role: z.string().min(1, 'Role is required'),
+  employeeId: z.string().min(1, 'Employee ID is required'),
 });
 
 export type WizardStep1FormData = z.infer<typeof wizardStep1Schema>;

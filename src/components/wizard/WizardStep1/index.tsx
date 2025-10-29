@@ -7,6 +7,7 @@ import { wizardStep1Schema, type WizardStep1FormData } from './schema';
 import { ROLES } from '../../../types';
 import { departmentApi } from '../../../services/api';
 import { useDebounce } from '../../../hooks/useDebounce';
+import { useEmployeeId } from '../../../hooks/useEmployeeId';
 import styles from './styles.module.css';
 
 interface WizardStep1Props {
@@ -19,6 +20,8 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
     register,
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<WizardStep1FormData>({
     resolver: zodResolver(wizardStep1Schema),
@@ -27,7 +30,16 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
       email: '',
       department: '',
       role: '',
+      employeeId: '',
     },
+  });
+
+  const department = watch('department');
+
+  // Auto-generate employee ID when department changes
+  useEmployeeId({
+    department,
+    onIdGenerated: (employeeId) => setValue('employeeId', employeeId),
   });
 
   const onSubmit = (data: WizardStep1FormData) => {
@@ -98,6 +110,15 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
               </NativeSelectField>
             </NativeSelectRoot>
             {errors.role && <Field.ErrorText>{errors.role.message}</Field.ErrorText>}
+          </Field.Root>
+
+          <Field.Root invalid={!!errors.employeeId} required>
+            <Field.Label>Employee ID</Field.Label>
+            <Input
+              {...register('employeeId')}
+              disabled
+            />
+            {errors.employeeId && <Field.ErrorText>{errors.employeeId.message}</Field.ErrorText>}
           </Field.Root>
 
           <div className={styles.actions}>
