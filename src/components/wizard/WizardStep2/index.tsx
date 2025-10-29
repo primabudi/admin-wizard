@@ -1,11 +1,14 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import AsyncSelect from 'react-select/async';
 import { Button, Input, NativeSelectRoot, NativeSelectField, Stack, Textarea } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react/field';
 import { wizardStep2Schema, type WizardStep2FormData } from './schema';
 import { EMPLOYMENT_TYPES } from '../../../types';
 import { fileToBase64, validateImageFile } from '../../../utils/fileToBase64';
+import { locationApi } from '../../../services/api';
+import { useDebounce } from '../../../hooks/useDebounce';
 import styles from './styles.module.css';
 
 interface WizardStep2Props {
@@ -18,6 +21,7 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues }: WizardS
   const {
     register,
     handleSubmit,
+    control,
     setValue,
     formState: { errors, isValid },
   } = useForm<WizardStep2FormData>({
@@ -59,6 +63,19 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues }: WizardS
     setPhotoPreview(null);
     setValue('photo', '');
   };
+
+  const loadLocationOptions = useDebounce(async (inputValue: string) => {
+    if (!inputValue) return [];
+    try {
+      const locations = await locationApi.getLocations(inputValue);
+      return locations.map((location) => ({
+        label: location.name,
+        value: location.name,
+      }));
+    } catch {
+      return [];
+    }
+  }, 300);
 
   const handleFormSubmit = (data: WizardStep2FormData) => {
     onSubmit(data);
@@ -107,9 +124,20 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues }: WizardS
 
           <Field.Root invalid={!!errors.officeLocation} required>
             <Field.Label>Office Location</Field.Label>
-            <Input
-              placeholder="TODO: Autocomplete"
-              {...register('officeLocation')}
+            <Controller
+              name="officeLocation"
+              control={control}
+              render={({ field }) => (
+                <AsyncSelect
+                  cacheOptions
+                  loadOptions={loadLocationOptions}
+                  value={field.value ? { label: field.value, value: field.value } : null}
+                  onChange={(option) => field.onChange(option?.value || '')}
+                  onBlur={field.onBlur}
+                  placeholder="Search location..."
+                  isClearable
+                />
+              )}
             />
             {errors.officeLocation && <Field.ErrorText>{errors.officeLocation.message}</Field.ErrorText>}
           </Field.Root>
