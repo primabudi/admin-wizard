@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@chakra-ui/react';
+import { toaster } from '../../components/ui/toaster';
 import WizardStep1 from '../../components/wizard/WizardStep1';
 import WizardStep2 from '../../components/wizard/WizardStep2';
 import type { WizardStep1FormData } from '../../components/wizard/WizardStep1/schema';
@@ -11,7 +13,8 @@ import styles from './styles.module.css';
 
 export default function Wizard() {
   const role = useRole();
-  const { submit } = useWizardSubmit();
+  const navigate = useNavigate();
+  const { state: submitState, submit } = useWizardSubmit();
 
   // Admin starts at step 1, Ops starts at step 2
   const [currentStep, setCurrentStep] = useState<1 | 2>(role === 'admin' ? 1 : 2);
@@ -57,7 +60,23 @@ export default function Wizard() {
       return;
     }
 
-    await submit(step1Data, data);
+    try {
+      await submit(step1Data, data);
+
+      clearDraft(role);
+      toaster.create({
+        title: 'Success!',
+        description: 'Employee added successfully!',
+        type: 'success',
+      });
+
+      // add delay to allow toast to be displayed
+      setTimeout(() => {
+        navigate('/employees');
+      }, 500);
+    } catch (error) {
+      console.error('Submission failed:', error);
+    }
   };
 
   const handleClearDraft = () => {
@@ -96,6 +115,7 @@ export default function Wizard() {
           defaultValues={step2Data || undefined}
           showBackButton={role === 'admin'}
           onChange={handleStep2Change}
+          isSubmitting={submitState === 'submitting_basic' || submitState === 'submitting_details'}
         />
       )}
     </div>

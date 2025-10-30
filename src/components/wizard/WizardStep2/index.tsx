@@ -17,9 +17,10 @@ interface WizardStep2Props {
   defaultValues?: Partial<WizardStep2FormData>;
   showBackButton?: boolean;
   onChange?: (data: WizardStep2FormData) => void;
+  isSubmitting?: boolean;
 }
 
-export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackButton = true, onChange }: WizardStep2Props) {
+export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackButton = true, onChange, isSubmitting = false }: WizardStep2Props) {
   const {
     register,
     handleSubmit,
@@ -104,12 +105,12 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
 
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Stack gap={4}>
-          <Field.Root invalid={!!errors.photo || !!photoError}>
+          <Field.Root invalid={!!errors.photo || !!photoError} disabled={isSubmitting}>
             <Field.Label>Photo</Field.Label>
             {photoPreview ? (
               <div className={styles.photoPreview}>
                 <img src={photoPreview} alt="Preview" className={styles.previewImage} />
-                <Button onClick={handleRemovePhoto} colorPalette="red" size="sm" className={styles.removeButton}>
+                <Button onClick={handleRemovePhoto} colorPalette="red" size="sm" className={styles.removeButton} disabled={isSubmitting}>
                   Remove
                 </Button>
               </div>
@@ -124,7 +125,7 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
             {photoError && <Field.ErrorText>{photoError}</Field.ErrorText>}
           </Field.Root>
 
-          <Field.Root invalid={!!errors.employmentType} required>
+          <Field.Root invalid={!!errors.employmentType} required disabled={isSubmitting}>
             <Field.Label>Employment Type</Field.Label>
             <NativeSelectRoot>
               <NativeSelectField {...register('employmentType')}>
@@ -139,7 +140,7 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
             {errors.employmentType && <Field.ErrorText>{errors.employmentType.message}</Field.ErrorText>}
           </Field.Root>
 
-          <Field.Root invalid={!!errors.officeLocation} required>
+          <Field.Root invalid={!!errors.officeLocation} required disabled={isSubmitting}>
             <Field.Label>Office Location</Field.Label>
             <Controller
               name="officeLocation"
@@ -153,13 +154,14 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
                   onBlur={field.onBlur}
                   placeholder="Search location..."
                   isClearable
+                  isDisabled={isSubmitting}
                 />
               )}
             />
             {errors.officeLocation && <Field.ErrorText>{errors.officeLocation.message}</Field.ErrorText>}
           </Field.Root>
 
-          <Field.Root invalid={!!errors.notes}>
+          <Field.Root invalid={!!errors.notes} disabled={isSubmitting}>
             <Field.Label>Notes</Field.Label>
             <Textarea
               placeholder="Additional notes (optional)"
@@ -171,12 +173,12 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
 
           <div className={styles.actions}>
             {showBackButton && (
-              <Button onClick={onBack} colorPalette="gray">
+              <Button onClick={onBack} colorPalette="gray" disabled={isSubmitting}>
                 Back
               </Button>
             )}
-            <Button type="submit" colorPalette="blue" disabled={!isFormFilled}>
-              Submit
+            <Button type="submit" colorPalette="blue" disabled={!isFormFilled || isSubmitting} loading={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit'}
             </Button>
           </div>
         </Stack>

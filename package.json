@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "api:step1": "json-server --watch mock-api/db-step1.json --port 4001 --middlewares mock-api/middleware.js",
-    "api:step2": "json-server --watch mock-api/db-step2.json --port 4002 --middlewares mock-api/middleware.js"
+    "api:step1": "json-server --watch mock-api/db-step1.json --port 4001 --middlewares mock-api/middleware.cjs",
+    "api:step2": "json-server --watch mock-api/db-step2.json --port 4002 --middlewares mock-api/middleware.cjs"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.28.0",

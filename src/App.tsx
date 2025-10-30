@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from "./components/ui/Layout";
+import { Toaster } from "./components/ui/toaster";
 import Home from './pages/Home';
 import Wizard from './pages/Wizard';
 import EmployeeList from './pages/EmployeeList';
@@ -14,6 +15,7 @@ function App() {
           <Route path="/employees" element={<EmployeeList />} />
         </Routes>
       </Layout>
+      <Toaster />
     </BrowserRouter>
   );
 }
