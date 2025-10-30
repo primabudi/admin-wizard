@@ -78,18 +78,18 @@ export default function WizardStep1({ onNext, defaultValues, onChange }: WizardS
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Step 1: Basic Information</h2>
+      <h2 className={styles.title} data-testid="step1-title">Step 1: Basic Information</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form} data-testid="step1-form">
           <Field.Root invalid={!!errors.fullName} required>
             <Field.Label>Full Name</Field.Label>
-            <Input {...register('fullName')} />
+            <Input {...register('fullName')} data-testid="fullName-input" />
             {errors.fullName && <Field.ErrorText>{errors.fullName.message}</Field.ErrorText>}
           </Field.Root>
 
           <Field.Root invalid={!!errors.email} required>
             <Field.Label>Email</Field.Label>
-            <Input type="email" {...register('email')} />
+            <Input type="email" {...register('email')} data-testid="email-input" />
             {errors.email && <Field.ErrorText>{errors.email.message}</Field.ErrorText>}
           </Field.Root>
 
@@ -99,15 +99,18 @@ export default function WizardStep1({ onNext, defaultValues, onChange }: WizardS
               name="department"
               control={control}
               render={({ field }) => (
-                <AsyncSelect
-                  cacheOptions
-                  loadOptions={loadDepartmentOptions}
-                  value={field.value ? { label: field.value, value: field.value } : null}
-                  onChange={(option) => field.onChange(option?.value || '')}
-                  onBlur={field.onBlur}
-                  placeholder="Search department..."
-                  isClearable
-                />
+                <div data-testid="department-select">
+                  <AsyncSelect
+                    cacheOptions
+                    loadOptions={loadDepartmentOptions}
+                    value={field.value ? { label: field.value, value: field.value } : null}
+                    onChange={(option) => field.onChange(option?.value || '')}
+                    onBlur={field.onBlur}
+                    placeholder="Search department..."
+                    isClearable
+                    classNamePrefix="department"
+                  />
+                </div>
               )}
             />
             {errors.department && <Field.ErrorText>{errors.department.message}</Field.ErrorText>}
@@ -116,7 +119,7 @@ export default function WizardStep1({ onNext, defaultValues, onChange }: WizardS
           <Field.Root invalid={!!errors.role} required>
             <Field.Label>Role</Field.Label>
             <NativeSelectRoot>
-              <NativeSelectField {...register('role')}>
+              <NativeSelectField {...register('role')} data-testid="role-select">
                 <option value="">Select a role</option>
                 {ROLES.map((role) => (
                   <option key={role} value={role}>
@@ -133,12 +136,13 @@ export default function WizardStep1({ onNext, defaultValues, onChange }: WizardS
             <Input
               {...register('employeeId')}
               disabled
+              data-testid="employeeId-input"
             />
             {errors.employeeId && <Field.ErrorText>{errors.employeeId.message}</Field.ErrorText>}
           </Field.Root>
 
           <div className={styles.actions}>
-            <Button type="submit" colorPalette="blue" disabled={!isFormFilled}>
+            <Button type="submit" colorPalette="blue" disabled={!isFormFilled} data-testid="next-button">
               Next
             </Button>
           </div>

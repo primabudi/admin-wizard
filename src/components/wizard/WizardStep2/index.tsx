@@ -101,9 +101,9 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Step 2: Details & Submit</h2>
+      <h2 className={styles.title} data-testid="step2-title">Step 2: Details & Submit</h2>
 
-      <form onSubmit={handleSubmit(handleFormSubmit)} className={styles.form}>
+      <form onSubmit={handleSubmit(handleFormSubmit)} className={styles.form} data-testid="step2-form">
           <Field.Root invalid={!!errors.photo || !!photoError} disabled={isSubmitting}>
             <Field.Label>Photo</Field.Label>
             {photoPreview ? (
@@ -127,7 +127,7 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
           <Field.Root invalid={!!errors.employmentType} required disabled={isSubmitting}>
             <Field.Label>Employment Type</Field.Label>
             <NativeSelectRoot>
-              <NativeSelectField {...register('employmentType')}>
+              <NativeSelectField {...register('employmentType')} data-testid="employmentType-select">
                 <option value="">Select employment type</option>
                 {EMPLOYMENT_TYPES.map((type) => (
                   <option key={type} value={type}>
@@ -145,16 +145,19 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
               name="officeLocation"
               control={control}
               render={({ field }) => (
-                <AsyncSelect
-                  cacheOptions
-                  loadOptions={loadLocationOptions}
-                  value={field.value ? { label: field.value, value: field.value } : null}
-                  onChange={(option) => field.onChange(option?.value || '')}
-                  onBlur={field.onBlur}
-                  placeholder="Search location..."
-                  isClearable
-                  isDisabled={isSubmitting}
-                />
+                <div data-testid="location-select">
+                  <AsyncSelect
+                    cacheOptions
+                    loadOptions={loadLocationOptions}
+                    value={field.value ? { label: field.value, value: field.value } : null}
+                    onChange={(option) => field.onChange(option?.value || '')}
+                    onBlur={field.onBlur}
+                    placeholder="Search location..."
+                    isClearable
+                    isDisabled={isSubmitting}
+                    classNamePrefix="location"
+                  />
+                </div>
               )}
             />
             {errors.officeLocation && <Field.ErrorText>{errors.officeLocation.message}</Field.ErrorText>}
@@ -166,17 +169,18 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
               placeholder="Additional notes (optional)"
               rows={4}
               {...register('notes')}
+              data-testid="notes-textarea"
             />
             {errors.notes && <Field.ErrorText>{errors.notes.message}</Field.ErrorText>}
           </Field.Root>
 
           <div className={styles.actions}>
             {showBackButton && (
-              <Button onClick={onBack} colorPalette="gray" disabled={isSubmitting}>
+              <Button onClick={onBack} colorPalette="gray" disabled={isSubmitting} data-testid="back-button">
                 Back
               </Button>
             )}
-            <Button type="submit" colorPalette="blue" disabled={!isFormFilled || isSubmitting} loading={isSubmitting}>
+            <Button type="submit" colorPalette="blue" disabled={!isFormFilled || isSubmitting} loading={isSubmitting} data-testid="submit-button">
               {isSubmitting ? 'Submitting...' : 'Submit'}
             </Button>
           </div>
