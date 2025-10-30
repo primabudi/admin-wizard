@@ -1,22 +1,58 @@
+/* Mobile */
 .container {
-  max-width: 600px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0;
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: stretch;
   margin-top: 1rem;
+  grid-column: 1 / -1;
+}
+
+.actions button {
+  min-height: 48px;
+  flex: 1;
+}
+
+/* Desktop: 768px and up */
+@media (min-width: 768px) {
+  .container {
+    max-width: 1000px;
+  }
+
+  .title {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .form {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2rem;
+  }
+
+  .actions {
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+  }
+
+  .actions button {
+    flex: none;
+    min-width: 140px;
+    font-size: 1.05rem;
+  }
 }

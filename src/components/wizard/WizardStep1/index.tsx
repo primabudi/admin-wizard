@@ -2,7 +2,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import AsyncSelect from 'react-select/async';
-import { Button, Input, NativeSelectRoot, NativeSelectField, Stack } from '@chakra-ui/react';
+import { Button, Input, NativeSelectRoot, NativeSelectField } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react/field';
 import { wizardStep1Schema, type WizardStep1FormData } from './schema';
 import { ROLES } from '../../../types';
@@ -80,8 +80,7 @@ export default function WizardStep1({ onNext, defaultValues, onChange }: WizardS
     <div className={styles.container}>
       <h2 className={styles.title}>Step 1: Basic Information</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack gap={4}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <Field.Root invalid={!!errors.fullName} required>
             <Field.Label>Full Name</Field.Label>
             <Input {...register('fullName')} />
@@ -143,7 +142,6 @@ export default function WizardStep1({ onNext, defaultValues, onChange }: WizardS
               Next
             </Button>
           </div>
-        </Stack>
       </form>
     </div>
   );

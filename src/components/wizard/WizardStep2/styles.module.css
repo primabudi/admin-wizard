@@ -1,19 +1,33 @@
+/* Mobile */
 .container {
-  max-width: 600px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0;
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .actions {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
   gap: 0.75rem;
   margin-top: 1rem;
+  grid-column: 1 / -1;
+}
+
+.actions button {
+  width: 100%;
+  min-height: 48px;
 }
 
 .photoPreview {
@@ -24,7 +38,7 @@
 }
 
 .previewImage {
-  max-width: 200px;
+  max-width: 100%;
   max-height: 200px;
   border-radius: 0.5rem;
   object-fit: cover;
@@ -33,4 +47,41 @@
 
 .removeButton {
   margin-top: 0.5rem;
+  width: auto;
+  min-width: 100px;
+}
+
+/* Desktop: 768px and up */
+@media (min-width: 768px) {
+  .container {
+    max-width: 1000px;
+  }
+
+  .title {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .form {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2rem;
+  }
+
+  .actions {
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .actions button {
+    width: auto;
+    min-width: 140px;
+    font-size: 1.05rem;
+  }
+
+  .previewImage {
+    max-width: 250px;
+    max-height: 250px;
+  }
 }

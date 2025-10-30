@@ -14,8 +14,7 @@ export default function Layout({ children }: LayoutProps) {
           <h2>Admin Wizard</h2>
         </Link>
         <nav className={styles.nav}>
-          <Link to="/">Home</Link>
-          <Link to="/employees">Employees</Link>
+          <Link to="/">Employees</Link>
         </nav>
       </header>
       <main className={styles.main}>{children}</main>

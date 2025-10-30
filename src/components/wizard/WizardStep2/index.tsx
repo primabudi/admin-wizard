@@ -2,7 +2,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useEffect } from 'react';
 import AsyncSelect from 'react-select/async';
-import { Button, Input, NativeSelectRoot, NativeSelectField, Stack, Textarea } from '@chakra-ui/react';
+import { Button, Input, NativeSelectRoot, NativeSelectField, Textarea } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react/field';
 import { wizardStep2Schema, type WizardStep2FormData } from './schema';
 import { EMPLOYMENT_TYPES } from '../../../types';
@@ -103,8 +103,7 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
     <div className={styles.container}>
       <h2 className={styles.title}>Step 2: Details & Submit</h2>
 
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <Stack gap={4}>
+      <form onSubmit={handleSubmit(handleFormSubmit)} className={styles.form}>
           <Field.Root invalid={!!errors.photo || !!photoError} disabled={isSubmitting}>
             <Field.Label>Photo</Field.Label>
             {photoPreview ? (
@@ -181,7 +180,6 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
               {isSubmitting ? 'Submitting...' : 'Submit'}
             </Button>
           </div>
-        </Stack>
       </form>
     </div>
   );

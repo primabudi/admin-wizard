@@ -1,7 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from "./components/ui/Layout";
 import { Toaster } from "./components/ui/toaster";
-import Home from './pages/Home';
 import Wizard from './pages/Wizard';
 import EmployeeList from './pages/EmployeeList';
 
@@ -10,9 +9,9 @@ function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<EmployeeList />} />
           <Route path="/wizard" element={<Wizard />} />
-          <Route path="/employees" element={<EmployeeList />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
       <Toaster />

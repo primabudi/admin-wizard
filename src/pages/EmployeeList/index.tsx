@@ -19,9 +19,14 @@ export default function EmployeeList() {
     hasPreviousPage,
   } = usePagination({ items: employees, itemsPerPage: 10 });
 
-  const handleAddEmployee = () => {
+  const handleAddEmployeeAdmin = () => {
     clearDraft('admin');
     navigate('/wizard?role=admin');
+  };
+
+  const handleAddEmployeeOps = () => {
+    clearDraft('ops');
+    navigate('/wizard?role=ops');
   };
 
   if (loading) {
@@ -49,8 +54,20 @@ export default function EmployeeList() {
   if (employees.length === 0) {
     return (
       <div className={styles.container}>
-        <h1>Employee List</h1>
-        <p>No employees found.</p>
+        <div className={styles.header}>
+          <div>
+            <h1>Employee List</h1>
+            <p className={styles.count}>No employees found.</p>
+          </div>
+          <div className={styles.buttonGroup}>
+            <Button onClick={handleAddEmployeeAdmin} colorPalette="blue" size="md" className={styles.addButton}>
+              + Add Employee (Admin)
+            </Button>
+            <Button onClick={handleAddEmployeeOps} colorPalette="green" size="md" className={styles.addButton}>
+              + Add Employee (Ops)
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -62,12 +79,18 @@ export default function EmployeeList() {
           <h1>Employee List</h1>
           <p className={styles.count}>Total: {employees.length} employees</p>
         </div>
-        <Button onClick={handleAddEmployee} colorPalette="blue" size="md">
-          + Add Employee
-        </Button>
+        <div className={styles.buttonGroup}>
+          <Button onClick={handleAddEmployeeAdmin} colorPalette="blue" size="md" className={styles.addButton}>
+            + Add Employee (Admin)
+          </Button>
+          <Button onClick={handleAddEmployeeOps} colorPalette="green" size="md" className={styles.addButton}>
+            + Add Employee (Ops)
+          </Button>
+        </div>
       </div>
 
-      <Table.Root variant="outline" striped>
+      <div className={styles.tableWrapper}>
+        <Table.Root variant="outline" striped>
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader>ID</Table.ColumnHeader>
@@ -105,6 +128,7 @@ export default function EmployeeList() {
           ))}
         </Table.Body>
       </Table.Root>
+      </div>
 
       {totalPages > 1 && (
         <div className={styles.pagination}>
