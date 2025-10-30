@@ -1,10 +1,12 @@
 import { useState, useCallback } from 'react';
+import { Button } from '@chakra-ui/react';
 import WizardStep1 from '../../components/wizard/WizardStep1';
 import WizardStep2 from '../../components/wizard/WizardStep2';
 import type { WizardStep1FormData } from '../../components/wizard/WizardStep1/schema';
 import type { WizardStep2FormData } from '../../components/wizard/WizardStep2/schema';
 import { useRole } from '../../hooks/useRole';
-import { useDraftAutoSave, loadDraft } from '../../hooks/useDraftAutoSave';
+import { useDraftAutoSave, loadDraft, clearDraft } from '../../hooks/useDraftAutoSave';
+import styles from './styles.module.css';
 
 export default function Wizard() {
   const role = useRole();
@@ -50,8 +52,28 @@ export default function Wizard() {
     console.log('Submitting wizard with:', { step1Data, step2Data: data });
   };
 
+  const handleClearDraft = () => {
+    if (window.confirm('Are you sure you want to clear the draft? All unsaved data will be lost.')) {
+      clearDraft(role);
+      setStep1Data(null);
+      setStep2Data(null);
+      if (role === 'admin') {
+        setCurrentStep(1);
+      }
+      window.location.reload();
+    }
+  };
+
+
   return (
     <div>
+      <div className={styles.clearDraftContainer}>
+        <Button onClick={handleClearDraft} colorPalette="red" variant="outline" size="sm">
+          Clear Draft
+        </Button>
+      </div>
+
+
       {/* Only show Step 1 for Admin role */}
       {role === 'admin' && currentStep === 1 && (
         <WizardStep1
