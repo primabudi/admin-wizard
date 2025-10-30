@@ -6,10 +6,12 @@ import type { WizardStep1FormData } from '../../components/wizard/WizardStep1/sc
 import type { WizardStep2FormData } from '../../components/wizard/WizardStep2/schema';
 import { useRole } from '../../hooks/useRole';
 import { useDraftAutoSave, loadDraft, clearDraft } from '../../hooks/useDraftAutoSave';
+import { useWizardSubmit } from '../../hooks/useWizardSubmit';
 import styles from './styles.module.css';
 
 export default function Wizard() {
   const role = useRole();
+  const { submit } = useWizardSubmit();
 
   // Admin starts at step 1, Ops starts at step 2
   const [currentStep, setCurrentStep] = useState<1 | 2>(role === 'admin' ? 1 : 2);
@@ -47,9 +49,15 @@ export default function Wizard() {
     }
   };
 
-  const handleStep2Submit = (data: WizardStep2FormData) => {
+  const handleStep2Submit = async (data: WizardStep2FormData) => {
     setStep2Data(data);
-    console.log('Submitting wizard with:', { step1Data, step2Data: data });
+
+    if (!step1Data) {
+      console.error('Cannot submit: Missing step 1 data');
+      return;
+    }
+
+    await submit(step1Data, data);
   };
 
   const handleClearDraft = () => {
@@ -72,7 +80,6 @@ export default function Wizard() {
           Clear Draft
         </Button>
       </div>
-
 
       {/* Only show Step 1 for Admin role */}
       {role === 'admin' && currentStep === 1 && (
