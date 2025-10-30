@@ -12,7 +12,10 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "api:step1": "json-server --watch mock-api/db-step1.json --port 4001 --middlewares mock-api/middleware.cjs",
-    "api:step2": "json-server --watch mock-api/db-step2.json --port 4002 --middlewares mock-api/middleware.cjs"
+    "api:step2": "json-server --watch mock-api/db-step2.json --port 4002 --middlewares mock-api/middleware.cjs",
+    "docker:start": "docker-compose up --build",
+    "docker:stop": "docker-compose down",
+    "docker:clean": "docker-compose down -v && docker system prune -f"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.28.0",

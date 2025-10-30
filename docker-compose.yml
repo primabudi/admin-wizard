@@ -1,0 +1,56 @@
+services:
+  # Main React application
+  app:
+    build: .
+    container_name: admin-wizard-app
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount source code but exclude node_modules
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.app.json:/app/tsconfig.app.json
+      - ./tsconfig.node.json:/app/tsconfig.node.json
+      # Prevent host's node_modules from being mounted
+      - /app/node_modules
+    environment:
+      - VITE_API_STEP1_URL=http://localhost:4001
+      - VITE_API_STEP2_URL=http://localhost:4002
+    depends_on:
+      - api-step1
+      - api-step2
+    networks:
+      - admin-wizard-network
+
+  # JSON Server for Step 1 API
+  api-step1:
+    image: node:20-alpine
+    container_name: admin-wizard-api-step1
+    working_dir: /app
+    ports:
+      - "4001:4001"
+    volumes:
+      - .:/app
+    command: npx json-server --watch mock-api/db-step1.json --port 4001 --host 0.0.0.0 --middlewares mock-api/middleware.cjs
+    networks:
+      - admin-wizard-network
+
+  # JSON Server for Step 2 API
+  api-step2:
+    image: node:20-alpine
+    container_name: admin-wizard-api-step2
+    working_dir: /app
+    ports:
+      - "4002:4002"
+    volumes:
+      - .:/app
+    command: npx json-server --watch mock-api/db-step2.json --port 4002 --host 0.0.0.0 --middlewares mock-api/middleware.cjs
+    networks:
+      - admin-wizard-network
+
+networks:
+  admin-wizard-network:
+    driver: bridge
