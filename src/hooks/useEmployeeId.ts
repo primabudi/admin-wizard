@@ -70,12 +70,18 @@ export function useEmployeeId({ department, onIdGenerated }: UseEmployeeIdOption
 
   // Auto-generate employee ID when department changes
   useEffect(() => {
-    if (department && !isLoading) {
-      const sequence = getNextSequenceForDepartment(department, existingEmployees);
-      const employeeId = generateEmployeeId(department, sequence);
-      onIdGenerated(employeeId);
+    if (!isLoading) {
+      if (department) {
+        const sequence = getNextSequenceForDepartment(department, existingEmployees);
+        const employeeId = generateEmployeeId(department, sequence);
+        onIdGenerated(employeeId);
+      } else {
+        // remove employee ID field when department is removed
+        onIdGenerated('');
+      }
     }
-  }, [department, existingEmployees, isLoading, onIdGenerated]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [department, existingEmployees, isLoading]);
 
   return { isLoading, error };
 }

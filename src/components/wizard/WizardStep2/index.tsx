@@ -1,6 +1,6 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AsyncSelect from 'react-select/async';
 import { Button, Input, NativeSelectRoot, NativeSelectField, Stack, Textarea } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react/field';
@@ -16,15 +16,17 @@ interface WizardStep2Props {
   onSubmit: (data: WizardStep2FormData) => void;
   defaultValues?: Partial<WizardStep2FormData>;
   showBackButton?: boolean;
+  onChange?: (data: WizardStep2FormData) => void;
 }
 
-export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackButton = true }: WizardStep2Props) {
+export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackButton = true, onChange }: WizardStep2Props) {
   const {
     register,
     handleSubmit,
     control,
+    watch,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<WizardStep2FormData>({
     resolver: zodResolver(wizardStep2Schema),
     mode: 'onChange',
@@ -38,6 +40,20 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
 
   const [photoPreview, setPhotoPreview] = useState<string | null>(defaultValues?.photo || null);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const formValues = watch();
+
+  const isFormFilled = formValues.employmentType && formValues.officeLocation;
+
+  // Notify parent of form changes for auto-save using watch subscription
+  useEffect(() => {
+    if (!onChange) return;
+
+    const subscription = watch((formData) => {
+      onChange(formData as WizardStep2FormData);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, onChange]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -159,7 +175,7 @@ export default function WizardStep2({ onBack, onSubmit, defaultValues, showBackB
                 Back
               </Button>
             )}
-            <Button type="submit" colorPalette="blue" disabled={!isValid}>
+            <Button type="submit" colorPalette="blue" disabled={!isFormFilled}>
               Submit
             </Button>
           </div>

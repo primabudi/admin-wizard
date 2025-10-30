@@ -1,5 +1,6 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import AsyncSelect from 'react-select/async';
 import { Button, Input, NativeSelectRoot, NativeSelectField, Stack } from '@chakra-ui/react';
 import { Field } from '@chakra-ui/react/field';
@@ -13,16 +14,17 @@ import styles from './styles.module.css';
 interface WizardStep1Props {
   onNext: (data: WizardStep1FormData) => void;
   defaultValues?: Partial<WizardStep1FormData>;
+  onChange?: (data: WizardStep1FormData) => void;
 }
 
-export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props) {
+export default function WizardStep1({ onNext, defaultValues, onChange }: WizardStep1Props) {
   const {
     register,
     handleSubmit,
     control,
     watch,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<WizardStep1FormData>({
     resolver: zodResolver(wizardStep1Schema),
     mode: 'onChange',
@@ -36,6 +38,20 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
   });
 
   const department = watch('department');
+  const formValues = watch();
+
+  const isFormFilled = formValues.fullName && formValues.email && formValues.department && formValues.role && formValues.employeeId;
+
+  // Notify parent of form changes for auto-save using watch subscription
+  useEffect(() => {
+    if (!onChange) return;
+
+    const subscription = watch((formData) => {
+      onChange(formData as WizardStep1FormData);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, onChange]);
 
   // Auto-generate employee ID when department changes
   useEmployeeId({
@@ -123,7 +139,7 @@ export default function WizardStep1({ onNext, defaultValues }: WizardStep1Props)
           </Field.Root>
 
           <div className={styles.actions}>
-            <Button type="submit" colorPalette="blue" disabled={!isValid}>
+            <Button type="submit" colorPalette="blue" disabled={!isFormFilled}>
               Next
             </Button>
           </div>
