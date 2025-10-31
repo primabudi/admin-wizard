@@ -1,5 +1,7 @@
 # Admin Wizard
 
+![Wizard Flow Submission](wizard.gif)
+
 Multi-step form application built with React, TypeScript, Vite, and Chakra UI.
 
 ## Quick Start with Docker
